@@ -50,7 +50,7 @@ FetchContent_MakeAvailable(glfw)
 
 
 # GLAD
-set(GLAD_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/external/glad/glad.c")
+set(GLAD_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/external/glad/src/glad.c")
 
 add_library(showcasegl_glad STATIC
     "${GLAD_SOURCE}"

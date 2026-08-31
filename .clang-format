@@ -1,0 +1,70 @@
+---
+# inherited base style
+BasedOnStyle: LLVM
+Language: Cpp
+Standard: Latest
+
+# indentation and line width
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 80
+ContinuationIndentWidth: 4
+IndentCaseLabels: true
+AccessModifierOffset: -4
+
+# functions, conditionals, loops, and blocks
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortBlocksOnASingleLine: false
+
+# pointers and references
+PointerAlignment: Left
+ReferenceAlignment: Pointer
+DerivePointerAlignment: false
+
+# white space
+SpaceBeforeParens: ControlStatements
+SpaceBeforeAssignmentOperators: true
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+SpaceAfterCStyleCast: false
+SpaceAfterLogicalNot: false
+
+# function args and params
+AlignAfterOpenBracket: BlockIndent
+BinPackArguments: false
+BinPackParameters: false
+AllowAllParametersOfDeclarationOnNextLine: false
+
+# initializer lists
+BreakConstructorInitializers: BeforeComma
+ConstructorInitializerIndentWidth: 4
+PackConstructorInitializers: Never
+
+# access modifiers
+EmptyLineBeforeAccessModifier: LogicalBlock
+EmptyLineAfterAccessModifier: Never
+
+# namespaces
+NamespaceIndentation: None
+FixNamespaceComments: true
+ShortNamespaceLines: 1
+
+# includes
+SortIncludes: CaseSensitive
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^<.*\.hpp?>'
+    Priority: 1
+  - Regex: '^<.*>'
+    Priority: 2
+  - Regex: '^".*"'
+    Priority: 3
+
+# comments
+ReflowComments: true
+
+# formatting enabled
+DisableFormat: false
