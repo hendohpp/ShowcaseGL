@@ -1,16 +1,58 @@
 # cmake build system
-build/
+/build/
+/cmake-build-*/
 
 
-# compiled libraries, tests, and examples
-build/bin/
+# cmake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CTestTestfile.cmake
+Makefile
+compile_commands.json
+install_manifest.txt
 
+
+# cmakeake generated metadata
+*.cmake.user
+CMakeUserPresets.json
+
+
+# compiled binaries and libraries
+/bin/
+/lib/
 *.so
+*.so.*
 *.dll
 *.dylib
-
 *.a
 *.lib
+*.exe
+*.bin
+
+
+# compiler output
+*.o
+*.obj
+*.out
+
+
+# clangd
+.cache/
+.clangd/
+compile_flags.txt
 
 
 # ide / editor
+.vscode/*
+.nvim/
+*.swp
+*.swo
+*~
+Session.vim
+.idea/
+.vs/
+*.user
+*.suo
+.DS_Store
+Thumbs.db

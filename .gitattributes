@@ -1,0 +1,21 @@
+# vendored glad sources
+/external/glad/** linguist-vendored
+
+
+# sources
+*.cpp   text diff=cpp
+*.hpp   text diff=cpp
+
+
+# compiled output
+*.so    binary
+*.so.*  binary
+*.dll   binary
+*.dylib binary
+*.a     binary
+*.lib   binary
+*.exe   binary
+*.bin   binary
+*.o     binary
+*.obj   binary
+*.out   binary
