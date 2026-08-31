@@ -111,6 +111,9 @@ endif()
 
 
 # developer tools
+option(ENABLE_CLANG_FORMAT  "enable clang-format target" OFF)
+option(ENABLE_CLANG_TIDY    "enable clang-tidy target" OFF)
+
 include(cmake/format.cmake)
 include(cmake/tidy.cmake)
 
