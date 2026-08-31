@@ -1,0 +1,16 @@
+# cmake build system
+build/
+
+
+# compiled libraries, tests, and examples
+build/bin/
+
+*.so
+*.dll
+*.dylib
+
+*.a
+*.lib
+
+
+# ide / editor
