@@ -14,8 +14,12 @@ namespace showcasegl {
 class Application {
 public:
     // creates and initializes the application, GLFW window, and OpenGL context
-    static std::expected<Application, ApplicationError>
-    create(const std::string& winName, int winWidth = 1280, int winHeight = 720);
+    static std::expected<Application, ApplicationError> create(
+        const std::string& winName,
+        int winWidth = 1280,
+        int winHeight = 720,
+        bool resizable = false
+    );
 
     // destroys the GLFW window handle and terminates if window context is owned
     ~Application();
@@ -28,11 +32,11 @@ public:
     Application(Application&&) noexcept;
     Application& operator=(Application&&) noexcept;
 
-    // checks if the window is open and active
+    // checks if the app window is open and active
     bool isRunning() const;
-    // prepares the window to render a new frame
+    // prepares the app window to render a new frame
     void beginFrame();
-    // displays the rendered frame to the screen
+    // displays a rendered frame to the screen
     void endFrame();
 
     // retrieves previous frame duration in seconds
