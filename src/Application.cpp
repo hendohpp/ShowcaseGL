@@ -9,7 +9,15 @@
 namespace showcasegl {
 
 std::expected<Application, ApplicationError>
-Application::create(const std::string& winName, int winWidth, int winHeight) {
+Application::create(const std::string& winName, int winWidth, int winHeight, bool resizable) {
+    if (winWidth <= 0 || winHeight <= 0) {
+        return std::unexpected(ApplicationError::InvalidWindowSize);
+    }
+
+    if (winName.empty()) {
+        return std::unexpected(ApplicationError::InvalidWindowName);
+    }
+
     if (!glfwInit()) {
         return std::unexpected(ApplicationError::GlfwInitializationFailed);
     }
@@ -23,7 +31,7 @@ Application::create(const std::string& winName, int winWidth, int winHeight) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 #endif
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+    glfwWindowHint(GLFW_RESIZABLE, resizable);
 
     std::unique_ptr<GLFWwindow, GLFWWindowDeleter> window{
         glfwCreateWindow(winWidth, winHeight, winName.c_str(), nullptr, nullptr)

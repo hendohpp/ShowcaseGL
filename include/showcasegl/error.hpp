@@ -5,12 +5,13 @@
 
 namespace showcasegl {
 
-
 enum class ApplicationError {
     None,
     GlfwInitializationFailed,
     GlfwWindowCreationFailed,
     GladInitializationFailed,
+    InvalidWindowName,
+    InvalidWindowSize,
 };
 
 constexpr static std::string_view enumToString(showcasegl::ApplicationError errorCode) {
@@ -23,6 +24,10 @@ constexpr static std::string_view enumToString(showcasegl::ApplicationError erro
             return "showcasegl::ApplicationError::GlfwWindowCreationFailed";
         case showcasegl::ApplicationError::GladInitializationFailed:
             return "showcasegl::ApplicationError::GladInitializationFailed";
+        case showcasegl::ApplicationError::InvalidWindowName:
+            return "showcasegl::ApplicationError::InvalidWindowName";
+        case showcasegl::ApplicationError::InvalidWindowSize:
+            return "showcasegl::ApplicationError::InvalidWindowSize";
     }
     return "Unknown ApplicationError";
 }

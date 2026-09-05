@@ -1,12 +1,11 @@
 #include <cassert>
-
 #include <iostream>
 
-#include "showcasegl/error.hpp"
 #include "showcasegl/Application.hpp"
+#include "showcasegl/error.hpp"
 
 int main() {
-    auto res = showcasegl::Application::create("Test Application Window", 1920, 1080);
+    auto res = showcasegl::Application::create("Test Application Window", 1920, 1080, true);
     if (!res) {
         std::cout << showcasegl::errorToString(res.error()) << "\n";
         return -1;
