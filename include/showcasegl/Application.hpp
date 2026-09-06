@@ -21,14 +21,14 @@ public:
         bool resizable = false
     );
 
-    // destroys the GLFW window handle and terminates if window context is owned
+    // cleans up GLFW window and context resources
     ~Application();
 
-    // disable copy and assignment to prevent GLFW context sharing or duplication
+    // disable copying to ensure unique onwership of GLFW context
     Application(const Application&) = delete;
     Application& operator=(const Application&) = delete;
 
-    // allow transfer of GLFW context with noexcept to optimize for STL container usage
+    // allow move to transfer GLFW ownership
     Application(Application&&) noexcept;
     Application& operator=(Application&&) noexcept;
 

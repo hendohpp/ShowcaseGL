@@ -65,6 +65,7 @@ Application::~Application() {
 }
 
 // compiler manages move semantics
+//!TODO: update move semantics when input / callbacks are created 
 Application::Application(Application&&) noexcept = default;
 Application& Application::operator=(Application&&) noexcept = default;
 
