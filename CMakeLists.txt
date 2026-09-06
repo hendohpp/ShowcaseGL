@@ -49,6 +49,22 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(glfw)
 
 
+# GLM
+set(BUILD_SHARED_LIBS   OFF CACHE BOOL "" FORCE)
+set(GLM_BUILD_TESTS     OFF CACHE BOOL "" FORCE)
+set(GLM_BUILD_INSTALL   OFF CACHE BOOL "" FORCE)
+set(GLM_VER             "1.0.3")
+
+FetchContent_Declare(
+    glm
+    GIT_REPOSITORY https://github.com/g-truc/glm.git
+    GIT_TAG ${GLM_VER}
+    GIT_SHALLOW TRUE
+)
+
+FetchContent_MakeAvailable(glm)
+
+
 # GLAD
 set(GLAD_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/external/glad/src/glad.c")
 
@@ -80,7 +96,6 @@ add_library(showcasegl
     src/Camera.cpp
     src/Mesh.cpp
     src/Model.cpp
-    src/Scene.cpp
     src/Shader.cpp
     src/Texture.cpp
 )
@@ -93,8 +108,11 @@ target_include_directories(showcasegl
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
 
-target_link_libraries(showcasegl
-    PUBLIC glfw showcasegl_glad OpenGL::GL
+target_link_libraries(showcasegl PUBLIC 
+    glfw 
+    showcasegl_glad 
+    OpenGL::GL
+    glm::glm
 )
 
 if(MSVC)

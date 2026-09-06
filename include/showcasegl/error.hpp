@@ -5,6 +5,8 @@
 
 namespace showcasegl {
 
+// error types
+
 enum class ApplicationError {
     None,
     GlfwInitializationFailed,
@@ -13,6 +15,12 @@ enum class ApplicationError {
     InvalidWindowName,
     InvalidWindowSize,
 };
+
+enum class ShaderError {
+    
+};
+
+// error to string conversion helpers
 
 constexpr static std::string_view enumToString(showcasegl::ApplicationError errorCode) {
     switch (errorCode) {
@@ -31,6 +39,15 @@ constexpr static std::string_view enumToString(showcasegl::ApplicationError erro
     }
     return "Unknown ApplicationError";
 }
+
+constexpr static std::string_view enumToString(showcasegl::ShaderError errorCode) {
+    switch (errorCode) {
+
+    }
+    return "Unknown ShaderError";
+}
+
+// error to string public api
 
 template <typename T> constexpr std::string_view errorToString(T errorCode) {
     return enumToString(errorCode);
