@@ -4,14 +4,19 @@
 #include <glm/glm.hpp>
 
 #include <cstdint>
+#include <expected>
 #include <string>
+#include <unordered_map>
+
+#include "error.hpp"
 
 namespace showcasegl {
 
 class Shader {
 public:
     // compiles shaders and links them to a shader program
-    Shader(const std::string& vertexSource, const std::string& fragmentSource);
+    static std::expected<Shader, ShaderError>
+    create(const std::string& vertexSource, const std::string& fragmentSource);
 
     // releases shader program resources
     ~Shader();
@@ -21,15 +26,18 @@ public:
     Shader& operator=(Shader&) = delete;
 
     // allow move to transfer GPU handle ownership
-    Shader(Shader&&) noexcept;
-    Shader& operator=(Shader&&) noexcept;
+    Shader(Shader&& other) noexcept;
+    Shader& operator=(Shader&& other) noexcept;
 
     // sets the shader program as active
-    void bind();
+    void bind() const;
+
+    //! TODO: hot reloading shaders
 
     // scalar uniform setters
     void setBool(const std::string& uniformName, bool val) const;
     void setInt(const std::string& uniformName, int val) const;
+    void setUInt(const std::string& uniformName, unsigned int val) const;
     void setFloat(const std::string& uniformName, float val) const;
 
     // vector uniform setters
@@ -40,15 +48,22 @@ public:
     void setVec3(const std::string& uniformName, const glm::vec3& val) const;
 
     void setVec4(const std::string& uniformName, float x, float y, float z, float w) const;
-    void setVec4(const std::string& uniformName, const glm::vec4& val);
+    void setVec4(const std::string& uniformName, const glm::vec4& val) const;
 
     // matrix uniform setters
-    void setMat2(const std::string& name, const glm::mat2& val) const;
-    void setMat3(const std::string& name, const glm::mat3& val) const;
-    void setMat4(const std::string& name, const glm::mat4& val) const;
+    void setMat2(const std::string& uniformName, const glm::mat2& val) const;
+    void setMat3(const std::string& uniformName, const glm::mat3& val) const;
+    void setMat4(const std::string& uniformName, const glm::mat4& val) const;
 
 private:
-    uint32_t id{0};
+    Shader(uint32_t id);
+    uint32_t m_id{0};
+
+    // find uniform location in cache or query for it otherwise
+    [[nodiscard]] int32_t getUniLoc(const std::string& name) const;
+
+    // maps uniform name to location to limit string conversion and location querying
+    mutable std::unordered_map<std::string, int32_t> m_uniCache;
 };
 
 }; // namespace showcasegl

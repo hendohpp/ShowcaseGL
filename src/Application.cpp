@@ -80,7 +80,7 @@ bool Application::isRunning() const {
 }
 
 void Application::beginFrame() {
-    float currFrameTime = static_cast<float>(glfwGetTime());
+    float currFrameTime{static_cast<float>(glfwGetTime())};
     m_deltaTime = currFrameTime - m_prevFrameTime;
     m_prevFrameTime = currFrameTime;
 

@@ -8,7 +8,6 @@ namespace showcasegl {
 // error types
 
 enum class ApplicationError {
-    None,
     GlfwInitializationFailed,
     GlfwWindowCreationFailed,
     GladInitializationFailed,
@@ -17,15 +16,15 @@ enum class ApplicationError {
 };
 
 enum class ShaderError {
-    
+    VertexShaderCompilationFailed,
+    FragmentShaderCompilationFailed,
+    ShaderProgramLinkFailed,
 };
 
 // error to string conversion helpers
 
 constexpr static std::string_view enumToString(showcasegl::ApplicationError errorCode) {
     switch (errorCode) {
-        case showcasegl::ApplicationError::None:
-            return "showcasegl::ApplicationError::None";
         case showcasegl::ApplicationError::GlfwInitializationFailed:
             return "showcasegl::ApplicationError::GlfwInitializationFailed";
         case showcasegl::ApplicationError::GlfwWindowCreationFailed:
@@ -42,7 +41,12 @@ constexpr static std::string_view enumToString(showcasegl::ApplicationError erro
 
 constexpr static std::string_view enumToString(showcasegl::ShaderError errorCode) {
     switch (errorCode) {
-
+        case showcasegl::ShaderError::VertexShaderCompilationFailed:
+            return "showcasegl::ShaderError::VertexShaderCompilationFailed";
+        case showcasegl::ShaderError::FragmentShaderCompilationFailed:
+            return "showcasegl::ShaderError::FragmentShaderCompilationFailed";
+        case showcasegl::ShaderError::ShaderProgramLinkFailed:
+            return "showcasegl::ShaderError::ShaderProgramLinkFailed";
     }
     return "Unknown ShaderError";
 }
