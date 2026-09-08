@@ -37,6 +37,7 @@ include(FetchContent)
 set(GLFW_BUILD_DOCS         OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES     OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS        OFF CACHE BOOL "" FORCE)
+set(GLFW_INSTALL            OFF CACHE BOOL "" FORCE)
 set(GLFW_VER                "3.5.1")
 
 FetchContent_Declare(
@@ -148,6 +149,23 @@ endif()
 option(SHOWCASEGL_BUILD_TESTS "build ShowcaseGL tests" ON)
 
 if(SHOWCASEGL_BUILD_TESTS)
-    enable_testing()
+    include(CTest)
+
+    # GTEST
+    set(gtest_force_shared_crt  ON CACHE BOOL "" FORCE)
+    set(BUILD_GMOCK             OFF CACHE BOOL "" FORCE)
+    set(INSTALL_GTEST           OFF CACHE BOOL "" FORCE)
+    set(GTEST_VER               "v1.18.0")
+
+    FetchContent_Declare(
+        gtest
+        GIT_REPOSITORY https://github.com/google/googletest.git
+        GIT_TAG ${GTEST_VER}
+        GIT_SHALLOW TRUE
+    )
+
+    FetchContent_MakeAvailable(gtest)
+
     add_subdirectory(tests)
+    include(cmake/valgrind.cmake)
 endif()

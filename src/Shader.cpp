@@ -1,4 +1,4 @@
-#include "Shader.hpp"
+#include "showcasegl/Shader.hpp"
 
 #include <glad/glad.h>
 #include <utility>
@@ -91,6 +91,10 @@ Shader& Shader::operator=(Shader&& other) noexcept {
 
 void Shader::bind() const {
     glUseProgram(m_id);
+}
+
+void Shader::unbind() {
+    glUseProgram(0);
 }
 
 void Shader::setBool(const std::string& uniformName, bool val) const {

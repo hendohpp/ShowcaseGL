@@ -31,6 +31,7 @@ public:
 
     // sets the shader program as active
     void bind() const;
+    static void unbind();
 
     //! TODO: hot reloading shaders
 
