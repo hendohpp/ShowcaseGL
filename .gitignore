@@ -8,7 +8,6 @@ CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
 CTestTestfile.cmake
-Makefile
 compile_commands.json
 install_manifest.txt
 
@@ -56,3 +55,9 @@ Session.vim
 *.suo
 .DS_Store
 Thumbs.db
+
+
+# generated documentation
+docs/diagrams/generated/
+*.png
+*.svg

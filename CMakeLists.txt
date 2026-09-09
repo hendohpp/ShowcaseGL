@@ -138,7 +138,7 @@ include(cmake/tidy.cmake)
 
 
 # usage examples
-option(SHOWCASEGL_BUILD_EXAMPLES "Build ShowcaseGL examples" ON)
+option(SHOWCASEGL_BUILD_EXAMPLES "build ShowcaseGL examples" ON)
 
 if(SHOWCASEGL_BUILD_EXAMPLES)
     add_subdirectory(examples)
