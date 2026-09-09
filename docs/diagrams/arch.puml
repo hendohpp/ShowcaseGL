@@ -1,0 +1,57 @@
+@startuml SHOWCASEGL_ARCHITECTURE
+
+skinparam componentStyle rectangle
+skinparam shadowing false
+
+package "ShowcaseGL" {
+    component Application
+    component Camera
+    component Shader
+    component Model
+    component Mesh
+    component Texture
+}
+
+package "External" {
+    component GLFW
+    component GLAD
+    component GLM
+}
+
+component "Client" as ClientApp
+
+ClientApp --> Application : creates
+ClientApp --> Camera : configures
+ClientApp --> Model : loads
+ClientApp --> Shader : provides shader code
+
+Application --> GLFW : creates window\nand context
+Application --> GLAD : initializes context\nand swaps buffers
+
+Shader --> GLAD : compiles user provided shaders\nowns shader program
+Texture --> GLAD : owns texture object
+Mesh --> GLAD : owns VAO/VBO/EBO
+Model --> Mesh : contains
+Model --> Texture : uses
+
+Camera --> GLM : uses math types
+Shader --> GLM : uses math types
+
+note right of Application
+    Owns the GLFW window
+    and manages the GLAD
+    context lifetime.
+end note
+
+note bottom of ClientApp
+    The user controls the main loop
+    and issues application-specific
+    rendering commands.
+end note
+
+note right of GLAD
+    Exposes OpenGL functions
+    at compile time
+end note
+
+@enduml
