@@ -95,6 +95,7 @@ find_package(OpenGL REQUIRED)
 add_library(showcasegl
     src/Application.cpp
     src/Camera.cpp
+    src/error.cpp
     src/Mesh.cpp
     src/Model.cpp
     src/Shader.cpp
