@@ -4,11 +4,10 @@
 
 TEST(ApplicationTest, CreateApp) {
     {
-        auto result = showcasegl::Application::create("Test Application Window", 1920, 1080, true);
+        auto appResult = showcasegl::Application::create("Test Application Window", 1920, 1080, true);
+        ASSERT_TRUE(appResult.has_value());
 
-        ASSERT_TRUE(result.has_value());
-
-        showcasegl::Application app{std::move(*result)};
+        showcasegl::Application app = std::move(appResult.value());
         EXPECT_TRUE(app.isRunning());
     }
 }
