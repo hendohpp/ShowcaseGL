@@ -7,13 +7,24 @@
 
 #include "showcasegl/error.hpp"
 
-struct GLFWwindow;
-
 namespace showcasegl {
 
 class Application {
 public:
-    // creates and initializes the application, GLFW window, and OpenGL context
+    /**
+     * @brief creates and initializes an application.
+     * 
+     * @details initializes a window, input handling, and opengl context.
+     *          to ensure no runtime exceptions occur, any failure while initializing the window
+     *          is returned as an error code, and thus should be checked by the caller.
+     * 
+     * @param[in] winName the name to be displayed by the window manager
+     * @param[in] winWidth number of horizontal screen coordinates
+     * @param[in] winHeight number of vertical screen coordinates
+     * @param[in] resizable flag that determines if window cam be resized after creation
+     * 
+     * @return the application object or error code that occured during initialization.
+     */
     static std::expected<Application, ApplicationError> create(
         const std::string& winName,
         int winWidth = 1280,
@@ -21,38 +32,44 @@ public:
         bool resizable = false
     );
 
-    // cleans up GLFW window and context resources
+    // delete copy (implicit) and allow move
     ~Application();
-
-    // disable copying to ensure unique onwership of GLFW context
-    Application(const Application&) = delete;
-    Application& operator=(const Application&) = delete;
-
-    // allow move to transfer GLFW ownership
     Application(Application&&) noexcept;
     Application& operator=(Application&&) noexcept;
 
-    // checks if the app window is open and active
+    /**
+     * @brief checks if the app window is open and active.
+     * 
+     * @return if the app has not been instructed to stop
+     */
     bool isRunning() const;
-    // prepares the app window to render a new frame
+    
+    /**
+     * @brief prepares the app window to render a new frame.
+     * 
+     * @details polls events, clears buffers, and updates delta time
+     */
     void beginFrame();
-    // displays a rendered frame to the screen
+    
+    /**
+     * @brief displays a rendered frame to the screen.
+     * 
+     * @details finalizes drawing and swaps front and back buffer
+     */
     void endFrame();
 
-    // retrieves previous frame duration in seconds
+    /**
+     * @brief retrieves previous frame duration in seconds.
+     * 
+     * @return the time elapsed from the start of the last frame, and the start of the current frame
+     */
     float getDeltaTime() const noexcept;
 
 private:
-    struct GLFWWindowDeleter {
-        void operator()(GLFWwindow* win) const noexcept;
-    };
+    struct AppState;
+    std::unique_ptr<AppState> m_appState;
 
-    Application(std::unique_ptr<GLFWwindow, GLFWWindowDeleter> win);
-
-    std::unique_ptr<GLFWwindow, GLFWWindowDeleter> m_win;
-
-    float m_deltaTime{0.0f};
-    float m_prevFrameTime{0.0f};
+    explicit Application(std::unique_ptr<AppState> appState);
 };
 
 }; // namespace showcasegl

@@ -8,6 +8,28 @@
 
 namespace showcasegl {
 
+// private internal state definition.
+// the app state is held in a smart pointer, its members need to be accessed via ->
+// client code doesn't need to know that
+struct Application::AppState {
+    struct GLFWWindowDeleter {
+        void operator()(GLFWwindow* win) const noexcept {
+            if (win) {
+                glfwDestroyWindow(win);
+            }
+        }
+    };
+
+    std::unique_ptr<GLFWwindow, GLFWWindowDeleter> win;
+    float deltaTime{0.0f};
+    float prevFrameTime{0.0f};
+
+    ~AppState() {
+        win.reset();
+        glfwTerminate();
+    }
+};
+
 std::expected<Application, ApplicationError>
 Application::create(const std::string& winName, int winWidth, int winHeight, bool resizable) {
     if (winWidth <= 0 || winHeight <= 0) {
@@ -33,70 +55,65 @@ Application::create(const std::string& winName, int winWidth, int winHeight, boo
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, resizable);
 
-    std::unique_ptr<GLFWwindow, GLFWWindowDeleter> window{
+    std::unique_ptr<GLFWwindow, AppState::GLFWWindowDeleter> win{
         glfwCreateWindow(winWidth, winHeight, winName.c_str(), nullptr, nullptr)
     };
 
-    if (!window) {
+    if (!win) {
         glfwTerminate();
         return std::unexpected(ApplicationError::GlfwWindowCreationFailed);
     }
 
-    glfwMakeContextCurrent(window.get());
+    glfwMakeContextCurrent(win.get());
 
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
-        window.reset();
-        glfwTerminate();
         return std::unexpected(ApplicationError::GladInitializationFailed);
     }
 
-    return Application{std::move(window)};
+    auto appState = std::make_unique<AppState>();
+    appState->win = std::move(win);
+
+    return Application(std::move(appState));
 }
 
-Application::Application(std::unique_ptr<GLFWwindow, GLFWWindowDeleter> window)
-    : m_win(std::move(window)) {}
+Application::Application(std::unique_ptr<AppState> appState)
+    : m_appState(std::move(appState)) {}
 
-Application::~Application() {
-    if (!m_win) {
-        return;
-    }
-    m_win.reset();
-    glfwTerminate();
-}
-
-// compiler manages move semantics
-//!TODO: update move semantics when input / callbacks are created 
+Application::~Application() = default;
 Application::Application(Application&&) noexcept = default;
 Application& Application::operator=(Application&&) noexcept = default;
 
-void Application::GLFWWindowDeleter::operator()(GLFWwindow* win) const noexcept {
-    if (win) {
-        glfwDestroyWindow(win);
-    }
-}
-
 bool Application::isRunning() const {
-    return m_win && !glfwWindowShouldClose(m_win.get());
+    return m_appState && m_appState->win && !glfwWindowShouldClose(m_appState->win.get());
 }
 
 void Application::beginFrame() {
+    if (!m_appState || !m_appState->win) {
+        return;
+    }
+
     float currFrameTime{static_cast<float>(glfwGetTime())};
-    m_deltaTime = currFrameTime - m_prevFrameTime;
-    m_prevFrameTime = currFrameTime;
+    m_appState->deltaTime = currFrameTime - m_appState->prevFrameTime;
+    m_appState->prevFrameTime = currFrameTime;
 
     glfwPollEvents();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void Application::endFrame() {
-    if (!m_win) {
+    if (!m_appState || !m_appState->win) {
         return;
     }
-    glfwSwapBuffers(m_win.get());
+
+    glfwSwapBuffers(m_appState->win.get());
 }
 
 float Application::getDeltaTime() const noexcept {
-    return m_deltaTime;
+    if (!m_appState) {
+        return 0.0f;
+    }
+
+    return m_appState->deltaTime;
 }
 
 } // namespace showcasegl
