@@ -1,9 +1,23 @@
 #include "showcasegl/Shader.hpp"
 
 #include <glad/glad.h>
-#include <utility>
+#include <unordered_map>
 
 namespace showcasegl {
+
+// hidden internal state contains the shader uniform location cache
+// to avoid including unordered map in other compilations units
+struct Shader::ShaderState {
+    uint32_t id{0};
+    std::unordered_map<std::string, int32_t> uniformCache;
+
+    ~ShaderState() {
+        if (id == 0) {
+            return;
+        }
+        glDeleteProgram(id);
+    }
+};
 
 std::expected<Shader, ShaderError>
 Shader::create(const std::string& vertexSource, const std::string& fragmentSource) {
@@ -55,42 +69,25 @@ Shader::create(const std::string& vertexSource, const std::string& fragmentSourc
     glDeleteShader(vs);
     glDeleteShader(fs);
 
-    return Shader{shaderProgramId};
+    auto state = std::make_unique<ShaderState>();
+    state->id = shaderProgramId;
+
+    return Shader(std::move(state));
 }
 
-Shader::Shader(uint32_t id)
-    : m_id(id) {}
+Shader::Shader(std::unique_ptr<ShaderState> state)
+    : m_state(std::move(state)) {}
 
-Shader::~Shader() {
-    if (m_id == 0) {
-        return;
-    }
-    glDeleteProgram(m_id);
-}
-
-Shader::Shader(Shader&& other) noexcept
-    : m_id(other.m_id)
-    , m_uniCache(std::move(other.m_uniCache)) {
-    other.m_id = 0;
-}
-
-Shader& Shader::operator=(Shader&& other) noexcept {
-    if (this == &other) {
-        return *this;
-    }
-
-    if (m_id != 0) {
-        glDeleteProgram(m_id);
-    }
-
-    m_id = std::exchange(other.m_id, 0);
-    m_uniCache = std::move(other.m_uniCache);
-
-    return *this;
-}
+Shader::~Shader() = default;
+Shader::Shader(Shader&&) noexcept = default;
+Shader& Shader::operator=(Shader&&) noexcept = default;
 
 void Shader::bind() const {
-    glUseProgram(m_id);
+    if (!m_state) {
+        glUseProgram(0);
+        return;
+    }
+    glUseProgram(m_state->id);
 }
 
 void Shader::unbind() {
@@ -150,13 +147,17 @@ void Shader::setMat4(const std::string& uniformName, const glm::mat4& val) const
 }
 
 int32_t Shader::getUniLoc(const std::string& name) const {
-    auto it = m_uniCache.find(name);
-    if (it != m_uniCache.end()) {
+    if (!m_state) {
+        return -1;
+    }
+
+    auto it = m_state->uniformCache.find(name);
+    if (it != m_state->uniformCache.end()) {
         return it->second;
     }
 
-    int32_t uniLoc = glGetUniformLocation(m_id, name.c_str());
-    m_uniCache[name] = uniLoc;
+    int32_t uniLoc = glGetUniformLocation(m_state->id, name.c_str());
+    m_state->uniformCache[name] = uniLoc;
     return uniLoc;
 }
 

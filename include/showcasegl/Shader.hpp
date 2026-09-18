@@ -3,10 +3,9 @@
 
 #include <glm/glm.hpp>
 
-#include <cstdint>
 #include <expected>
+#include <memory>
 #include <string>
-#include <unordered_map>
 
 #include "error.hpp"
 
@@ -14,22 +13,24 @@ namespace showcasegl {
 
 class Shader {
 public:
-    // compiles shaders and links them to a shader program
+    /**
+     * @brief compiles shaders and links them to a shader program
+     *
+     * @details
+     *
+     * @param[in] vertexSource
+     * @param[in] fragmentSource
+     *
+     * @return
+     */
     static std::expected<Shader, ShaderError>
     create(const std::string& vertexSource, const std::string& fragmentSource);
 
-    // releases shader program resources
+    // delete copy (implicit) and allow move
     ~Shader();
-
-    // disable copying to ensure unique ownership of GPU resources
-    Shader(const Shader&) = delete;
-    Shader& operator=(Shader&) = delete;
-
-    // allow move to transfer GPU handle ownership
     Shader(Shader&& other) noexcept;
     Shader& operator=(Shader&& other) noexcept;
 
-    // sets the shader program as active
     void bind() const;
     static void unbind();
 
@@ -57,14 +58,13 @@ public:
     void setMat4(const std::string& uniformName, const glm::mat4& val) const;
 
 private:
-    Shader(uint32_t id);
-    uint32_t m_id{0};
+    struct ShaderState;
+    std::unique_ptr<ShaderState> m_state;
+
+    explicit Shader(std::unique_ptr<ShaderState> state);
 
     // find uniform location in cache or query for it otherwise
     [[nodiscard]] int32_t getUniLoc(const std::string& name) const;
-
-    // maps uniform name to location to limit string conversion and location querying
-    mutable std::unordered_map<std::string, int32_t> m_uniCache;
 };
 
 }; // namespace showcasegl
